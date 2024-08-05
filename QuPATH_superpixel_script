@@ -1,0 +1,7 @@
+setImageType('BRIGHTFIELD_H_DAB'); 
+setColorDeconvolutionStains('{"Name" : "H-DAB default", "Stain 1" : "Hematoxylin", "Values 1" : "0.65111 0.70119 0.29049", "Stain 2" : "DAB", "Values 2" : "0.26917 0.56824 0.77759", "Background" : "255 255 255"}'); 
+setPixelSizeMicrons(0.625,0.625); 
+selectAnnotations (); 
+runPlugin('qupath.imagej.superpixels.DoGSuperpixelsPlugin', '{"downsampleFactor": 1.0, "sigmaMicrons": 3, "minThreshold": 10.0, "maxThreshold": 230.0, "noiseThreshold": 0.0}'); 
+selectDetections(); 
+runPlugin('qupath.lib.algorithms.IntensityFeaturesPlugin', '{"downsample": 1.0, "region": "ROI", "tileSizePixels": 200.0, "colorOD": false, "colorStain1": false, "colorStain2": true, "colorStain3": false, "colorRed": false, "colorGreen": false, "colorBlue": false, "colorHue": false, "colorSaturation": false, "colorBrightness": false, "doMean": true, "doStdDev": false, "doMinMax": false, "doMedian": false, "doHaralick": false, "haralickDistance": 1, "haralickBins": 32}’); 
