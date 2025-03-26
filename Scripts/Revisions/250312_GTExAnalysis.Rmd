@@ -183,7 +183,7 @@ Individuals with undiagnosed TDP-43 will have multiple cryptic exons from the pa
 
 ```{r TDPundiagnosed}
 setwd("~/Library/CloudStorage/OneDrive-JohnsHopkins/WongLing/Scripts/250314_SnaptronRevisions/SnapMine_Paper/Scripts/Revisions/")
-df <- read.csv("250314_Cryptic_GTExAllCEPSI_meta.csv", row.names = 1)
+df <- read.csv("~/Library/CloudStorage/OneDrive-JohnsHopkins/WongLing/Scripts/250314_SnaptronRevisions/SnapMine_Paper/Scripts/Revisions/250314_Cryptic_GTExAllCEPSI_meta.csv", row.names = 1)
 subjects <- meta %>% dplyr::select(SUBJID,SEX, AGE, DTHHRDY) %>% distinct()
 
 # Subset GTEx PSI df to samples with >5% avg junction PSI
@@ -205,16 +205,16 @@ nCE_Tissue_Indiv <- nCE_Tissue %>%  group_by(SUBJID,SMTS) %>%
   pivot_longer(5:34, names_to = "SMTS", values_to = "UniqueCE")
   
 nCE_Tissue_Indiv %>% ggplot(aes(x = SMTS, y = UniqueCE)) + 
-  geom_hline(yintercept = 3, linetype = "dotted")+
+  geom_hline(yintercept = 5, linetype = "dotted")+
   geom_point(position = position_jitter(width = 0.2, height = 0.5), size = 2, color = "black")+
   geom_boxplot(outliers = F, alpha = 0.9, fill = "#AEAEAE") + 
   theme_classic() +theme(text = element_text(size = 14, color = "black"), axis.ticks = 
                            element_blank(),
                          axis.text.x = element_text(angle = 90, hjust = 1)) +
   ylab("# Unique Cryptic Exon per Individual") + xlab("") + 
-  scale_y_continuous(expand = c(0,0),  limits = c(0,7))  
+  scale_y_continuous(expand = c(0,0),  limits = c(0,19))  
 
-ggsave("250314_finalGTEX_AllPosCE.png",device = "png",
+ggsave("~/Library/CloudStorage/OneDrive-JohnsHopkins/WongLing/Scripts/250314_SnaptronRevisions/SnapMine_Paper/Scripts/Revisions/250314_finalGTEX_AllPosCE.png",device = "png",
        width = 50, height = 30, units = "cm",limitsize = FALSE)
 
 # Individuals with TDP path: >5 CE in a single tissue
@@ -226,7 +226,7 @@ nCE_Tissue_Indiv %>% filter(SUBJID %in% undiagnosedPath_Indiv$SUBJID) %>%
   pivot_wider(names_from = SMTS, values_from = UniqueCE, values_fill = 0) %>%
   pivot_longer(5:34, names_to = "SMTS", values_to = "UniqueCE") %>%
   ggplot(aes(x = SMTS, y = UniqueCE)) + 
-  geom_hline(yintercept = 3, linetype = "dotted")+
+  geom_hline(yintercept = 5, linetype = "dotted")+
   geom_point(position = position_jitter(width = 0.2, height = 0.5), size = 2, color = "black")+
   geom_boxplot(outliers = F, alpha = 0.9, fill = "#AEAEAE") + 
   theme_classic() +theme(text = element_text(size = 14, color = "black"), axis.ticks = 
@@ -283,7 +283,7 @@ genes = c("AGRN", "ATG4B", "EPB41L4A","G3BP1", "HDGFL2", "MYO18A", "PFKP", "RANB
 # Main figure - 2A
 df_vis %>% filter(CE %in% genes) %>%
   ggplot(aes(x = CE, y = avgPSI)) +  
-  geom_jitter(alpha = 0.8, color = "#A365A9",na.rm = T,width = 0.2, height = 0) +
+  geom_jitter(alpha = 0.2, color = "#A365A9",na.rm = T,width = 0.2, height = 0) +
   geom_boxplot(alpha = 0.5,width=0.5, fill = "white",
                position=position_dodge(width=0.2),
                outlier.shape = NA,lwd=0.3)+ 
@@ -293,8 +293,8 @@ df_vis %>% filter(CE %in% genes) %>%
         axis.title.x = element_blank(),
         axis.text.x = element_text(angle=90, vjust=1, hjust=1,family="Helvetica"),
         axis.ticks.x  = element_blank())+ 
-  scale_y_continuous(expand = c(0,0),  limits = c(0,100))
-ggsave(paste0(wd,"250314_finalGTEX_2A_CE_PSI.png"),device = "png",width = 20, height = 20, units = "cm",limitsize = FALSE)
+  scale_y_continuous(expand = c(0,0),  limits = c(0,102))
+ggsave(paste0(wd,"250314_finalGTEX_2A_CE_PSI.png"),device = "png",width = 20, height = 30, units = "cm",limitsize = FALSE)
 
 # Full set
 df_vis %>% 
@@ -338,8 +338,8 @@ df_vis %>% filter(CE %in% genes) %>%
         axis.title.x = element_blank(),
         axis.ticks.x  = element_blank(),
         axis.text.x = element_text(angle=90, vjust=1, hjust=1,family="Helvetica"))+ 
-  scale_y_continuous(expand = c(0,0),  limits = c(0,21))
-ggsave(paste0(wd,"250314_finalGTEX_2B_CE_PSI.png"),device = "png",width = 20, height = 20, units = "cm",limitsize = FALSE)
+  scale_y_continuous(expand = c(0,0),  limits = c(0,23))
+ggsave(paste0(wd,"250314_finalGTEX_2B_CE_PSI.png"),device = "png",width = 22, height = 20, units = "cm",limitsize = FALSE)
 
 ## Main figure - 2C
 df_posPct <- df_vis %>% #filter(CE %in% genes) %>%
