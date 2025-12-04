@@ -4,13 +4,17 @@
 \alias{calcPSI_bulk}
 \title{Calculate PSI values for each junction of interest from an info file}
 \usage{
-calcPSI_bulk(info_df)
+calcPSI_bulk(info_df, flatten_wide = F, flatten_long = F)
 }
 \arguments{
 \item{info_df}{Path to the info file which contains (at least) the following columns: novel_junc_id, compilation (sra_human, sra_mouse, tcga, gtex, encode), strand, novel_junc_left_coord, novel_junc_right_coord, canon_junc_coord.}
+
+\item{flatten_wide}{Use flatten_counts function to create wide df. Default: F.}
+
+\item{flatten_long}{Use flatten_counts function to create long df. Default: F.}
 }
 \value{
-List of daataframes - one per each unique target in info_df.
+List of dataframes - one per each unique target in info_df.
 }
 \description{
 This function calculates PSI values for cryptic exons given an info file
