@@ -1,0 +1,18 @@
+Package: snapmine
+Title: SnapMine: Mine Snaptron databases for junction usage 
+Version: 0.0.0.9000
+Authors@R: 
+    person(
+    "Irika", "Sinha",
+    "sinhairika@gmail.com", 
+    role = c("aut", "cre"),
+    comment = c(ORCID = "0000-0001-6440-7019"))
+Description: Runs SnapMine on multiple junctions identified by an info_df csv file. 
+    Is related to snapmine.idies.jhu.edu.
+License: `use_gpl3_license()` 
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Imports:
+    data.table (>= 1.17.8),
+    tidyverse (>= 2.0.0)
