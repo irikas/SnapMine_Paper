@@ -71,7 +71,9 @@ calculatePSI <- function(novel_junc_coord, canon_junc_coord, snaptron_df, totalC
 #'
 #' This function calculates PSI values for cryptic exons given an info file
 #' @param info_df Path to the info file which contains (at least) the following columns: novel_junc_id, compilation (sra_human, sra_mouse, tcga, gtex, encode), strand, novel_junc_left_coord, novel_junc_right_coord, canon_junc_coord.
-#' @returns List of daataframes - one per each unique target in info_df.
+#' @param flatten_wide Use flatten_counts function to create wide df. Default: F.
+#' @param flatten_long Use flatten_counts function to create long df. Default: F.
+#' @returns List of dataframes - one per each unique target in info_df.
 #' @export
 #' @references
 #' Christopher Wilks, Phani Gaddipati, Abhinav Nellore, Ben Langmead.
