@@ -1,8 +1,8 @@
 #' Calculate PSI values for a single junction of interest
 #'
 #' This function calculates PSI values for cryptic exons given junction coordinates
-#' @param novel_junc_coord Coordinates of the novel junction of interest (chr[1-22XYM]:[start]-[end])
-#' @param canon_junc_coord Coordinates of the related canonical junction (chr[1-22XYM]:[start]-[end])
+#' @param novel_junc_coord Coordinates of the novel junction of interest. Given as chr(1-22XYM):(start)-(end).
+#' @param canon_junc_coord Coordinates of the related canonical junction Given as chr(1-22XYM):(start)-(end).
 #' @param snaptron_df Output from snaptronQuery function.
 #' @param totalCountMin Sum of reads of canonical and novel junctions. Default: 15.
 #' @param filter_noCanon Filter out samples with 0 reads of canonical junction. Default: T.

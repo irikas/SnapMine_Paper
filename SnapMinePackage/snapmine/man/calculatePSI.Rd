@@ -13,9 +13,9 @@ calculatePSI(
 )
 }
 \arguments{
-\item{novel_junc_coord}{Coordinates of the novel junction of interest (chr\link{1-22XYM}:\link{start}-\link{end})}
+\item{novel_junc_coord}{Coordinates of the novel junction of interest. Given as chr(1-22XYM):(start)-(end).}
 
-\item{canon_junc_coord}{Coordinates of the related canonical junction (chr\link{1-22XYM}:\link{start}-\link{end})}
+\item{canon_junc_coord}{Coordinates of the related canonical junction Given as chr(1-22XYM):(start)-(end).}
 
 \item{snaptron_df}{Output from snaptronQuery function.}
 

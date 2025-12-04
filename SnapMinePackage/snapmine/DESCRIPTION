@@ -9,5 +9,5 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Imports:
-    data.table
-    tidyverse
+    data.table (>= 1.17.8),
+    tidyverse (>= 2.0.0)
