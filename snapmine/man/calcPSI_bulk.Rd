@@ -7,7 +7,7 @@
 calcPSI_bulk(info_df)
 }
 \arguments{
-\item{info_df}{Path to the info file which contains (at least) the following columns: id, compilation (sra_human, sra_mouse, tcga, gtex, encode), strand, novel_junc_left_coord, novel_junc_right_coord, canon_junc_coord.}
+\item{info_df}{Path to the info file which contains (at least) the following columns: novel_junc_id, compilation (sra_human, sra_mouse, tcga, gtex, encode), strand, novel_junc_left_coord, novel_junc_right_coord, canon_junc_coord.}
 }
 \value{
 List of daataframes - one per each unique target in info_df.

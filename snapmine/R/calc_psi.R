@@ -70,7 +70,7 @@ calculatePSI <- function(novel_junc_coord, canon_junc_coord, snaptron_df, totalC
 #' Calculate PSI values for each junction of interest from an info file
 #'
 #' This function calculates PSI values for cryptic exons given an info file
-#' @param info_df Path to the info file which contains (at least) the following columns: id, compilation (sra_human, sra_mouse, tcga, gtex, encode), strand, novel_junc_left_coord, novel_junc_right_coord, canon_junc_coord.
+#' @param info_df Path to the info file which contains (at least) the following columns: novel_junc_id, compilation (sra_human, sra_mouse, tcga, gtex, encode), strand, novel_junc_left_coord, novel_junc_right_coord, canon_junc_coord.
 #' @returns List of daataframes - one per each unique target in info_df.
 #' @export
 #' @references
