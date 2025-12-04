@@ -1,0 +1,47 @@
+---
+title: "SnapMine Vignette"
+author: "Irika Sinha"
+date: "2025-12-04"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load packages
+
+```{r packages}
+remotes::install_github("irikas/SnapMine_Paper", subdir = "snapmine", ref="progressbar")
+library(snapmine)
+library(data.table)
+library(tidyverse)
+library(biomaRt)
+```
+
+## Load files and format to needed columns
+
+```{r files}
+# Load df
+df <- fread("/Users/irika/Library/CloudStorage/OneDrive-JohnsHopkins/WongLing/Scripts/250325_NMDi/data/251126_CEdf.csv")
+
+# Original df did not have strand info so need to use biomaRt
+# Update df
+mart <- useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
+info <- getBM(attributes = c("ensembl_gene_id", "strand"), values = df$`Ensembl ID`, mart=mart)
+df <- df %>% left_join(info, by = join_by(`Ensembl ID` == ensembl_gene_id)) %>%
+  mutate(strand = ifelse(strand == 1, "+","-"))
+rm(mart,info)
+
+# Create info_df file
+info_df <- data.frame(novel_junc_id = paste("Gene Symbol","ID #", sep="_"),
+                      compilation = "sra_human", 
+                      strand = df$strand,
+                      novel_junc_left_coord = df$LeftJunction,
+                      novel_junc_right_coord = df$RightJunction,
+                      canon_junc_coord = df$`Canonical Splice Junction`)
+
+# Run query
+result_df <- calcPSI_bulk(info_df, flatten_long=T)
+```
+
