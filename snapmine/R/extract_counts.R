@@ -102,9 +102,15 @@ snaptronQuery <- function(uniqueCanonJunc) {
     est <- nrow(uniqueCanonJunc) * (mean(end[end != 0] - init[init != 0])) - time
     est <- round(seconds_to_period(est), 0)
     cat(paste0(" // ", i, " of ", nrow(uniqueCanonJunc), " // ETR: ", est), "")
+    cat(paste(
+      " // ", i, " of ", nrow(uniqueCanonJunc),
+      " // ETR:", remainining
+    ), "")
 
     rm(i)
   }
+
+  close(pb)
 
   return(snaptronQuery_df)
 }
