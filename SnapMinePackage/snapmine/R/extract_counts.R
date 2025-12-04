@@ -16,26 +16,32 @@
 #' Nat Commun 16, 6878 (2025). https://doi.org/10.1038/s41467-025-62004-5
 
 
-junctionData <- function(junction, strand, compilation){
+junctionData <- function(junction, strand, compilation) {
   # Identify which compilation is being used and the appropriate folder name in Snaptron
-  keyGenome = list("sra_human" = "srav3h",
-                   "sra_mouse" = "srav1m",
-                   "tcga" = "tcgav2",
-                   "gtex" = "gtexv2",
-                   "encode" = "encode1159")
+  keyGenome <- list(
+    "sra_human" = "srav3h",
+    "sra_mouse" = "srav1m",
+    "tcga" = "tcgav2",
+    "gtex" = "gtexv2",
+    "encode" = "encode1159"
+  )
 
   # Identify start and end coordinates of query: 100bp +/- query
-  chr = str_split_i(junction,":",1)
-  start = as.numeric(str_split_i(str_split_i(junction,":",2),"-",1))-100
-  end = as.numeric(str_split_i(str_split_i(junction,":",2),"-",2))+100
-  url <- paste0("https://snaptron.cs.jhu.edu/",keyGenome[compilation],"/snaptron?regions=",
-                chr,":",start,"-",end,"&rfilter=strand:",strand)
+  chr <- str_split_i(junction, ":", 1)
+  start <- as.numeric(str_split_i(str_split_i(junction, ":", 2), "-", 1)) - 100
+  end <- as.numeric(str_split_i(str_split_i(junction, ":", 2), "-", 2)) + 100
+  url <- paste0(
+    "https://snaptron.cs.jhu.edu/", keyGenome[compilation], "/snaptron?regions=",
+    chr, ":", start, "-", end, "&rfilter=strand:", strand
+  )
 
   # Download junction information
-  options(timeout=300)
-  snaptronQuery <- fread(file = url, sep="\t", quote = "",
-                         select = c("chromosome", "start", "end", "strand", "samples")) %>%
-    mutate(junction = paste0(chromosome,":", start,"-", end)) %>%
+  options(timeout = 300)
+  snaptronQuery <- fread(
+    file = url, sep = "\t", quote = "",
+    select = c("chromosome", "start", "end", "strand", "samples")
+  ) %>%
+    mutate(junction = paste0(chromosome, ":", start, "-", end)) %>%
     dplyr::select(c(junction, strand, samples))
   return(snaptronQuery)
 }
@@ -56,17 +62,19 @@ junctionData <- function(junction, strand, compilation){
 #' Nat Commun 16, 6878 (2025). https://doi.org/10.1038/s41467-025-62004-5
 
 
-snaptronQuery <- function(uniqueCanonJunc){
+snaptronQuery <- function(uniqueCanonJunc) {
   # Download junction data from Snaptron
   # Filter to relevant junctions
   # Bind relevant rows to new dataframe
   snaptronQuery_df <- data.frame()
 
-  for(i in 1:nrow(uniqueCanonJunc)){
-    df_pull <- junctionData(junction = uniqueCanonJunc$canon_junc_coord[i],
-                            strand = uniqueCanonJunc$strand[i],
-                            compilation = uniqueCanonJunc$compilation[i])
-    snaptronQuery_df <- rbind(snaptronQuery_df, df_pull[which(df_pull$junction %in% c(na.omit(uniqueCanonJunc$allJunc[[i]]))),])
+  for (i in 1:nrow(uniqueCanonJunc)) {
+    df_pull <- junctionData(
+      junction = uniqueCanonJunc$canon_junc_coord[i],
+      strand = uniqueCanonJunc$strand[i],
+      compilation = uniqueCanonJunc$compilation[i]
+    )
+    snaptronQuery_df <- rbind(snaptronQuery_df, df_pull[which(df_pull$junction %in% c(na.omit(uniqueCanonJunc$allJunc[[i]]))), ])
     rm(i)
   }
 
@@ -89,16 +97,18 @@ snaptronQuery <- function(uniqueCanonJunc){
 #' Large-scale RNA-Seq mining reveals ciclopirox olamine induces TDP-43 cryptic exons.
 #' Nat Commun 16, 6878 (2025). https://doi.org/10.1038/s41467-025-62004-5
 
-sampleJunctionCounts <- function(df){
+sampleJunctionCounts <- function(df) {
   # Create df for samples + count
   # Separate character into string of characters
   # Remove blanks
   allSamples <- str_split_1(df$samples, ",")
-  allSamples <- allSamples[allSamples!=""]
+  allSamples <- allSamples[allSamples != ""]
 
   # Split sample IDs and counts
-  sampleDF <- data.frame(sampleID = str_split_i(allSamples,":",1),
-                         junctionCount = as.numeric(str_split_i(allSamples,":",2)))
+  sampleDF <- data.frame(
+    sampleID = str_split_i(allSamples, ":", 1),
+    junctionCount = as.numeric(str_split_i(allSamples, ":", 2))
+  )
 
   return(sampleDF)
 }
