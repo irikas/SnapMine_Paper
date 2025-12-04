@@ -101,10 +101,10 @@ snaptronQuery <- function(uniqueCanonJunc) {
     # Estimated remaining time based on the mean time that took to run the previous iterations
     est <- nrow(uniqueCanonJunc) * (mean(end[end != 0] - init[init != 0])) - time
     est <- round(seconds_to_period(est), 0)
-    cat(paste(
-      " // ", i, " of ", nrow(uniqueCanonJunc),
-      " // ETR:", est
-    ), "")
+    # cat(paste(
+    #   " // ", i, " of ", nrow(uniqueCanonJunc),
+    #   " // ETR:", est
+    # ), "")
 
     rm(i)
   }
