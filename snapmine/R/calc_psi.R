@@ -82,7 +82,8 @@ calculatePSI <- function(novel_junc_coord, canon_junc_coord, snaptron_df, totalC
 #' Large-scale RNA-Seq mining reveals ciclopirox olamine induces TDP-43 cryptic exons.
 #' Nat Commun 16, 6878 (2025). https://doi.org/10.1038/s41467-025-62004-5
 
-calcPSI_bulk <- function(info_df) {
+calcPSI_bulk <- function(info_df, flatten_wide = F, flatten_long = F) {
+  if (flatten_wide & flatten_long) stop("choose either flatten_wide or flatten_long")
   # Identify unique canonical junctions to minimize duplication of Snaptron queries
   uniqueCanonJunc <- info_df %>% nest(allJunc = c(canon_junc_coord, novel_junc_left_coord, novel_junc_right_coord), .by = c(canon_junc_coord, strand, compilation))
   uniqueCanonJunc$allJunc <- lapply(uniqueCanonJunc$allJunc, function(x) unique(unlist(x)))
@@ -109,6 +110,13 @@ calcPSI_bulk <- function(info_df) {
     map(function(x) x %>% mutate(avgPSI = ifelse(!is.na(psi_r), ifelse(!is.na(psi_l), (psi_r + psi_l) / 2, 0), 0))) %>%
     modify2(info_df$novel_junc_id, function(x, y) x %>% mutate(novel_junc_id = y))
 
-  # Return list of counts dataframes
-  return(counts_list_merged)
+  # Format returned counts
+  if (flatten_wide) {
+    return(flattenCounts(counts_list_merged, wide = T))
+  } else if (flatten_long) {
+    return(flattenCounts(counts_list_merged, wide = F))
+  } else {
+    # Return list of counts dataframes
+    return(counts_list_merged)
+  }
 }
