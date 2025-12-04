@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Load packages
 
 ```{r packages}
-remotes::install_github("irikas/SnapMine_Paper", subdir = "snapmine", ref="progressbar")
+remotes::install_github("irikas/SnapMine_Paper", subdir = "snapmine")
 library(snapmine)
 library(data.table)
 library(tidyverse)
@@ -34,7 +34,7 @@ df <- df %>% left_join(info, by = join_by(`Ensembl ID` == ensembl_gene_id)) %>%
 rm(mart,info)
 
 # Create info_df file
-info_df <- data.frame(novel_junc_id = paste("Gene Symbol","ID #", sep="_"),
+info_df <- data.frame(novel_junc_id = paste(df$`Gene Symbol`,df$`ID #`, sep="_"),
                       compilation = "sra_human", 
                       strand = df$strand,
                       novel_junc_left_coord = df$LeftJunction,
