@@ -32,10 +32,16 @@ calculatePSI <- function(novel_junc_coord, canon_junc_coord, snaptron_df, totalC
         canonCounts <- sampleJunctionCounts(canonRow)
       } else {
         # Not detected in Snaptron
-        stop(paste0(canon_junc_coord, ": canoncial junction not found in snaptron"))
+        canonCounts <- data.frame(
+          sampleID = character(0),
+          junctionCount = character(0)
+        )
       }
     } else {
-      canonRow <- data.frame()
+      canonCounts <- data.frame(
+        sampleID = character(0),
+        junctionCount = character(0)
+      )
     }
 
     if (!is_empty(novelRow)) {
@@ -90,6 +96,8 @@ calculatePSI <- function(novel_junc_coord, canon_junc_coord, snaptron_df, totalC
 #' @param info_df Path to the info file which contains (at least) the following columns: novel_junc_id, compilation (sra_human, sra_mouse, tcga, gtex, encode), strand, novel_junc_left_coord, novel_junc_right_coord, canon_junc_coord.
 #' @param flatten_wide Use flatten_counts function to create wide df. Default: F.
 #' @param flatten_long Use flatten_counts function to create long df. Default: F.
+#' @param totalCountMin Sum of reads of canonical and novel junctions. Default: 15.
+#' @param filter_noCanon Filter out samples with 0 reads of canonical junction. Default: T.
 #' @returns List of dataframes - one per each unique target in info_df.
 #' @export
 #' @references
@@ -101,7 +109,7 @@ calculatePSI <- function(novel_junc_coord, canon_junc_coord, snaptron_df, totalC
 #' Large-scale RNA-Seq mining reveals ciclopirox olamine induces TDP-43 cryptic exons.
 #' Nat Commun 16, 6878 (2025). https://doi.org/10.1038/s41467-025-62004-5
 
-calcPSI_bulk <- function(info_df, flatten_wide = F, flatten_long = F) {
+calcPSI_bulk <- function(info_df, flatten_wide = F, flatten_long = F, totalCountMin = 15, filter_noCanon = T) {
   if (flatten_wide & flatten_long) stop("choose either flatten_wide or flatten_long")
   # Identify unique canonical junctions to minimize duplication of Snaptron queries
   uniqueCanonJunc <- info_df %>% nest(allJunc = c(canon_junc_coord, novel_junc_left_coord, novel_junc_right_coord), .by = c(canon_junc_coord, strand, compilation))
@@ -111,11 +119,11 @@ calcPSI_bulk <- function(info_df, flatten_wide = F, flatten_long = F) {
   snaptronQuery_df <- snaptronQuery(uniqueCanonJunc)
 
   # For each target in info file generate counts file and merge (left junction)
-  counts_list_left <- map2(info_df$canon_junc_coord, info_df$novel_junc_left_coord, function(x, y) calculatePSI(y, x, snaptronQuery_df) %>% as.data.frame())
+  counts_list_left <- map2(info_df$canon_junc_coord, info_df$novel_junc_left_coord, function(x, y) calculatePSI(y, x, snaptronQuery_df, totalCountMin = totalCountMin, filter_noCanon = filter_noCanon) %>% as.data.frame())
   names(counts_list_left) <- info_df$novel_junc_id
 
   # For each target in info file generate counts file and merge (right junction)
-  counts_list_right <- map2(info_df$canon_junc_coord, info_df$novel_junc_right_coord, function(x, y) calculatePSI(y, x, snaptronQuery_df))
+  counts_list_right <- map2(info_df$canon_junc_coord, info_df$novel_junc_right_coord, function(x, y) calculatePSI(y, x, snaptronQuery_df, totalCountMin = totalCountMin, filter_noCanon = filter_noCanon))
   names(counts_list_right) <- info_df$novel_junc_id
 
   # For NAs - replace with other side
