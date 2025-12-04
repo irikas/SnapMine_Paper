@@ -37,7 +37,7 @@ calculatePSI <- function(novel_junc_coord, canon_junc_coord, snaptron_df, totalC
       novelRow <- snaptron_df[novelRow, ]
       novelCounts <- sampleJunctionCounts(novelRow)
     } else {
-      novelRow <- data.frame()
+      novelCounts <- data.frame()
     }
 
     # Bind counts together by sampleID & filter based on minimum set
