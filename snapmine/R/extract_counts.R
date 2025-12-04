@@ -39,7 +39,8 @@ junctionData <- function(junction, strand, compilation) {
   options(timeout = 300)
   snaptronQuery <- fread(
     file = url, sep = "\t", quote = "",
-    select = c("chromosome", "start", "end", "strand", "samples")
+    select = c("chromosome", "start", "end", "strand", "samples"),
+    showProgress = F
   ) %>%
     mutate(junction = paste0(chromosome, ":", start, "-", end)) %>%
     dplyr::select(c(junction, strand, samples))
@@ -63,18 +64,45 @@ junctionData <- function(junction, strand, compilation) {
 
 
 snaptronQuery <- function(uniqueCanonJunc) {
+  # Progress bar
+  pb <- txtProgressBar(
+    min = 0, # Minimum value of the progress bar
+    max = nrow(uniqueCanonJunc), # Maximum value of the progress bar
+    style = 3, # Progress bar style (also available style = 1 and style = 2)
+    width = 50, # Progress bar width. Defaults to getOption("width")
+    char = "*"
+  ) # Character used to create the bar
+
+  init <- nrow(uniqueCanonJunc)
+  end <- nrow(uniqueCanonJunc)
+
   # Download junction data from Snaptron
   # Filter to relevant junctions
   # Bind relevant rows to new dataframe
   snaptronQuery_df <- data.frame()
 
   for (i in 1:nrow(uniqueCanonJunc)) {
+    # Set progress bar initializing time for iteration
+    init[i] <- Sys.time()
+
+    # Run code
     df_pull <- junctionData(
       junction = uniqueCanonJunc$canon_junc_coord[i],
       strand = uniqueCanonJunc$strand[i],
       compilation = uniqueCanonJunc$compilation[i]
     )
     snaptronQuery_df <- rbind(snaptronQuery_df, df_pull[which(df_pull$junction %in% c(na.omit(uniqueCanonJunc$allJunc[[i]]))), ])
+
+    # Set progress bar end time
+    end[i] <- Sys.time()
+    setTxtProgressBar(pb, i)
+    time <- round(seconds_to_period(sum(end - init)), 0)
+
+    # Estimated remaining time based on the mean time that took to run the previous iterations
+    est <- nrow(uniqueCanonJunc) * (mean(end[end != 0] - init[init != 0])) - time
+    est <- round(seconds_to_period(est), 0)
+    cat(paste0(" // Estimated time remaining:", est), "")
+
     rm(i)
   }
 
