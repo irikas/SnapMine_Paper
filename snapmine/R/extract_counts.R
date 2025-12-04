@@ -69,7 +69,7 @@ snaptronQuery <- function(uniqueCanonJunc) {
     min = 0, # Minimum value of the progress bar
     max = nrow(uniqueCanonJunc), # Maximum value of the progress bar
     style = 3, # Progress bar style (also available style = 1 and style = 2)
-    width = 50, # Progress bar width. Defaults to getOption("width")
+    width = nrow(uniqueCanonJunc), # Needed to avoid multiple printings of cat fx
     char = "*"
   ) # Character used to create the bar
 
@@ -101,7 +101,7 @@ snaptronQuery <- function(uniqueCanonJunc) {
     # Estimated remaining time based on the mean time that took to run the previous iterations
     est <- nrow(uniqueCanonJunc) * (mean(end[end != 0] - init[init != 0])) - time
     est <- round(seconds_to_period(est), 0)
-    cat(paste0(" // Estimated time remaining:", est), "")
+    cat(paste0(i, "/", nrow(uniqueCanonJunc), " complete | Estimated time remaining:", est), "")
 
     rm(i)
   }
