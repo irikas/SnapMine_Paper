@@ -17,23 +17,24 @@ library(snapmine)
 library(data.table)
 library(tidyverse)
 library(biomaRt)
+library(knitr)
 ```
 
-## Load files and format to needed columns
+## Load files and run Snaptron query
 
-```{r files}
-# Load df
+```{r files, eval=F}
+## Load df
 df <- fread("/Users/irika/Library/CloudStorage/OneDrive-JohnsHopkins/WongLing/Scripts/250325_NMDi/data/251126_CEdf.csv")
 
-# Original df did not have strand info so need to use biomaRt
-# Update df
+## Original df did not have strand info so need to use biomaRt
+## Update df
 mart <- useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
 info <- getBM(attributes = c("ensembl_gene_id", "strand"), values = df$`Ensembl ID`, mart=mart)
 df <- df %>% left_join(info, by = join_by(`Ensembl ID` == ensembl_gene_id)) %>%
   mutate(strand = ifelse(strand == 1, "+","-"))
 rm(mart,info)
 
-# Create info_df file
+## Create info_df file
 info_df <- data.frame(novel_junc_id = paste(df$`Gene Symbol`,df$`ID #`, sep="_"),
                       compilation = "sra_human", 
                       strand = df$strand,
@@ -41,7 +42,48 @@ info_df <- data.frame(novel_junc_id = paste(df$`Gene Symbol`,df$`ID #`, sep="_")
                       novel_junc_right_coord = df$RightJunction,
                       canon_junc_coord = df$`Canonical Splice Junction`)
 
-# Run query
-result_df <- calcPSI_bulk(info_df, flatten_long=T)
+## Run query
+# For the sake of the example, run twice for long and wide dfs.
+# Could also run without flattening - this would lead to a list of dfs and then both flatten functions could be done manually using [flatten_counts]
+result_df_long <- calcPSI_bulk(info_df, flatten_long=T)
+result_df_wide <- calcPSI_bulk(info_df, flatten_wide=T)
+# saveRDS(result_df_long, "/Users/irika/Library/CloudStorage/OneDrive-JohnsHopkins/WongLing/Scripts/250325_NMDi/output_tables/251204_snapmine_results.RDS")
+# saveRDS(result_df_wide, "/Users/irika/Library/CloudStorage/OneDrive-JohnsHopkins/WongLing/Scripts/250325_NMDi/output_tables/251204_snapmine_result_df_wide.RDS")
+```
+## Examples of input and output
+This is what the input info_df looks like. It contains four columns:
+-novel_junc_id (string)
+-compilation (one of the following: "sra_human", "sra_mouse", "tcga", "gtex", "encode")
+-strand (one of the following: "+", "-")
+-novel_junc_left_coord (in the format chr[1-22XY]:start-end)
+-novel_junc_right_coord (in the format chr[1-22XY]:start-end)
+-canon_junc_coord (in the format chr[1-22XY]:start-end)
+```{r info_df}
+head(info_df)
 ```
 
+This is what the output results look like (long format). The long format contains five columns:
+-sampleID (Snaptron sample ID)
+-psi_r (PSI of the right junction)
+-psi_l (PSI of the left junction)
+-avgPSI (average of psi_r and psi_l)
+-novel_junc_id (ID from the info_df)
+```{r result_df}
+head(result_df_long)
+```
+
+## Output results exploration
+```{r results_explore_all, fig.align = "c", out.width = "75%"}
+## How many different unique samples?
+print(paste0("There are ", length(unique(result_df$sampleID)), " unique samples in the results dataset"))
+
+ggplot(result_df, aes(x = avgPSI))+
+  geom_histogram(binwidth = 1, color = "white", linewidth = 0.1)+
+  theme_classic()+
+  ggtitle(label = "Novel junctions present at 0% PSI in most samples")+
+  theme(legend.position = "none")
+
+## Subset to avgPSI > 5
+result_df %>% group_by(sampleID, novel_junc_id) %>% summarize(avgPSI)
+
+```
