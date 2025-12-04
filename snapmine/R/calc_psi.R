@@ -28,19 +28,36 @@ calculatePSI <- function(novel_junc_coord, canon_junc_coord, snaptron_df, totalC
     # Parse the data to generate PSIs of interest
     if (!is_empty(canonRow)) {
       canonRow <- snaptron_df[canonRow, ]
-      canonCounts <- sampleJunctionCounts(canonRow)
+      if (!is_empty(canonRow)) {
+        canonCounts <- sampleJunctionCounts(canonRow)
+      } else {
+        # Not detected in Snaptron
+        stop(paste0(canon_junc_coord, ": canoncial junction not found in snaptron"))
+      }
     } else {
       canonRow <- data.frame()
     }
 
     if (!is_empty(novelRow)) {
       novelRow <- snaptron_df[novelRow, ]
-      novelCounts <- sampleJunctionCounts(novelRow)
+      if (!is_empty(novelRow)) {
+        novelCounts <- sampleJunctionCounts(novelRow)
+      } else {
+        # Not detected in Snaptron
+        novelCounts <- data.frame(
+          sampleID = character(0),
+          junctionCount = character(0)
+        )
+      }
     } else {
-      novelCounts <- data.frame()
+      novelCounts <- data.frame(
+        sampleID = character(0),
+        junctionCount = character(0)
+      )
     }
 
     # Bind counts together by sampleID & filter based on minimum set
+    # If either is empty - do not need to bind)
     counts_df <- canonCounts %>%
       full_join(novelCounts, by = "sampleID", suffix = c("_canon", "_novel")) %>%
       mutate(
