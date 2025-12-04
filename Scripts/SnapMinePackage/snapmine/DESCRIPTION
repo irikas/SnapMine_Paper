@@ -1,0 +1,13 @@
+Package: snapmine
+Title: SnapMine (many junctions of interest)
+Version: 0.0.0.9000
+Authors@R: 
+    person("Irika", "Sinha", , "sinhairika@gmail.com", role = c("aut", "cre"))
+Description: Runs SnapMine on junctions identified by an info_df csv
+License: `use_gpl3_license()` 
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Imports:
+    data.table
+    tidyverse

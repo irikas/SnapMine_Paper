@@ -14,10 +14,10 @@
 #' Large-scale RNA-Seq mining reveals ciclopirox olamine induces TDP-43 cryptic exons.
 #' Nat Commun 16, 6878 (2025). https://doi.org/10.1038/s41467-025-62004-5
 
-flattenCounts <- function(counts_list, wide = T,  ){
+flattenCounts <- function(counts_list, wide = T){
   counts_list_long <- list_rbind(counts_list) %>% as.data.frame()
 
-  if(wide = T){
+  if(wide){
     counts_list_wide <- counts_list_long %>% dplyr::select(-c(psi_r, psi_l)) %>%
       pivot_wider(id_cols = 1, names_from = novel_junc_id, values_from = avgPSI)
 
