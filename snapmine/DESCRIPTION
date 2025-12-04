@@ -4,7 +4,7 @@ Version: 0.0.0.9000
 Authors@R: 
     person(
     "Irika", "Sinha",
-    "sinhairika@gmail.com", 
+    email = "sinhairika@gmail.com", 
     role = c("aut", "cre"),
     comment = c(ORCID = "0000-0001-6440-7019"))
 Description: Runs SnapMine on multiple junctions identified by an info_df csv file. 
