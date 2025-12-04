@@ -65,16 +65,11 @@ junctionData <- function(junction, strand, compilation) {
 
 snaptronQuery <- function(uniqueCanonJunc) {
   # Progress bar
-  pb <- txtProgressBar(
-    min = 0, # Minimum value of the progress bar
-    max = nrow(uniqueCanonJunc), # Maximum value of the progress bar
-    style = 3, # Progress bar style (also available style = 1 and style = 2)
-    width = nrow(uniqueCanonJunc), # Needed to avoid multiple printings of cat fx
-    char = "*"
-  ) # Character used to create the bar
-
-  init <- nrow(uniqueCanonJunc)
-  end <- nrow(uniqueCanonJunc)
+  pb <- progress_bar$new(
+    format = "  Downloading data from Snaptron [:bar] :current/:total Complete // Estimated Time Remaining: :eta",
+    total = nrow(uniqueCanonJunc), clear = FALSE, width = round(getOption("width") * 0.75, 0),
+    complete = "*"
+  )
 
   # Download junction data from Snaptron
   # Filter to relevant junctions
@@ -82,9 +77,6 @@ snaptronQuery <- function(uniqueCanonJunc) {
   snaptronQuery_df <- data.frame()
 
   for (i in 1:nrow(uniqueCanonJunc)) {
-    # Set progress bar initializing time for iteration
-    init[i] <- Sys.time()
-
     # Run code
     df_pull <- junctionData(
       junction = uniqueCanonJunc$canon_junc_coord[i],
@@ -93,23 +85,10 @@ snaptronQuery <- function(uniqueCanonJunc) {
     )
     snaptronQuery_df <- rbind(snaptronQuery_df, df_pull[which(df_pull$junction %in% c(na.omit(uniqueCanonJunc$allJunc[[i]]))), ])
 
-    # Set progress bar end time
-    end[i] <- Sys.time()
-    setTxtProgressBar(pb, i)
-    # time <- round(seconds_to_period(sum(end - init)), 0)
-
-    # Estimated remaining time based on the mean time that took to run the previous iterations
-    # est <- nrow(uniqueCanonJunc) * (mean(end[end != 0] - init[init != 0])) - time
-    # est <- round(seconds_to_period(est), 0)
-    # cat(paste(
-    #   " // ", i, " of ", nrow(uniqueCanonJunc),
-    #   " // ETR:", est
-    # ), "")
-
+    # update progress bar
+    pb$tick()
     rm(i)
   }
-
-  close(pb)
 
   return(snaptronQuery_df)
 }
