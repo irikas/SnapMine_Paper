@@ -17,3 +17,7 @@ Imports:
     data.table (>= 1.17.8),
     progress (>= 1.2.3),
     tidyverse (>= 2.0.0)
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
