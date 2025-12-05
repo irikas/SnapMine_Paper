@@ -72,8 +72,7 @@ This is what the input info_df looks like. It contains four columns:
 - novel_junc_left_coord (in the format chr[1-22XY]:start-end)
 - novel_junc_right_coord (in the format chr[1-22XY]:start-end)
 - canon_junc_coord (in the format chr[1-22XY]:start-end)
-```{r info_df}
-head(info_df)
+```{r info_df, out.width="100%"}
 knitr::kable(head(info_df))
 ```
 
@@ -84,8 +83,8 @@ This is what the output results look like (long format). The long format contain
 - psi_l (PSI of the left junction)
 - avgPSI (average of psi_r and psi_l)
 - novel_junc_id (ID from the info_df)
-```{r result_df_long}
-head(result_df_long)
+```{r result_df_long, out.width="100%"}
+knitr::kable(head(result_df_long))
 ```
 
 This is what the output results look like (wide format). The wide format contains up to (n+1) columns:
@@ -95,12 +94,15 @@ This is what the output results look like (wide format). The wide format contain
 
 Each row corresponds to a sample.
 
-```{r result_df_wide}
-head(result_df_wide)
+```{r result_df_wide, out.width="100%"}
+knitr::kable(head(result_df_wide)[,1:10])
+print(paste0("For an info_df with ", nrow(info_df), 
+             " cryptic exons, the long df has ", 
+             ncol(result_df_wide), " rows. "))
 ```
 
 ## Output results exploration
-```{r results_explore_all, fig.align = "c", out.width="100%", fig.dpi=300}
+```{r results_explore_all, fig.align = "c", out.width="100%", fig.dpi=300, fig.asp=0.6}
 ## How many different unique samples?
 print(paste0("There are ", length(result_df_wide$sampleID), " unique samples in the results dataset"))
 
@@ -172,7 +174,7 @@ ggplot(result_df_long_TDPpos, aes(x = sampleID, y = avgPSI)) +
 
 ## Add metadata for putative TDP-43 negative samples
 
-```{r addMeta}
+```{r addMeta, fig.align = "c", out.width="100%", fig.dpi=300, fig.asp=1}
 meta <- add_SnaptronMeta(result_df_wide_TDPpos, "sra_human")
 
 # There is a lot of information pulled
@@ -184,10 +186,10 @@ meta <- meta %>% dplyr::select(c(rail_id, study_title, , sample_title, sample_na
 manualLabels <- data.frame(
   sampleID = as.character(meta$rail_id),
   sampleName = c(
-    rep("MRC5 cell line + MERS", 6),
-    rep("MDA-MB231 shTDP43+shSRSF3", 2),
-    rep("HeLa SMG6+SMG7 KD\nUPF1 CLIP", 2),
-    "HeLa UPF1 KD", "hMN siTDP43", "HeLa + Neobractatin"
+    rep("MRC5 cell line\n+ MERS", 6),
+    rep("MDA-MB231\nshTDP43+shSRSF3", 2),
+    rep("HeLa\nSMG6+SMG7 KD\nUPF1 CLIP", 2),
+    "HeLa UPF1 KD", "hMN siTDP43", "HeLa +\nNeobractatin"
   )
 )
 result_df_long_TDPpos <- result_df_long_TDPpos %>%
@@ -198,8 +200,8 @@ result_df_long_TDPpos <- result_df_long_TDPpos %>%
   )
 
 ggplot(result_df_long_TDPpos, aes(x = sampleID, y = avgPSI)) +
-  geom_jitter(width = 0.1, size = 0.1, alpha = 0.7) +
-  geom_boxplot(aes(fill = sampleName), alpha = 0.5, outliers = F, linewidth = 0.1) +
+  geom_jitter(width = 0.1, size = 0.1, alpha = 0.6) +
+  geom_boxplot(aes(fill = sampleName), alpha = 0.6, outliers = F, linewidth = 0.1) +
   theme_classic() +
   ggtitle(
     label = "Samples that are putatively lacking nuclear TDP-43",
@@ -215,8 +217,9 @@ ggplot(result_df_long_TDPpos, aes(x = sampleID, y = avgPSI)) +
   ) +
   theme(
     legend.position = "bottom", title = element_text(face = "bold"),
-    text = element_text(size = 5),
+    text = element_text(size = 5),legend.title.position = "top",
+    legend.spacing.y = unit(5, units = "points"),
+    legend.spacing.x = unit(5, units = "points"),
     axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)
-  ) +
-  guides(fill = guide_legend(nrow = 1))
+  ) 
 ```
