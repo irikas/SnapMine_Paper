@@ -8,10 +8,7 @@
 ## Description
 This repository includes scripts used to analyze data for the manuscript listed above. It also includes the scripts use to create the original SnapMine interface on R Shiny. Snapmine is now hosted at [https://snapmine.idies.jhu.edu/](https://snapmine.idies.jhu.edu/). 
 
-*Update (12/3/2025)*: This repository also includes an R package that can parse a csv file and identify samples with (pairs of) novel junctions in Snaptron. This functionality is mainly for querying many junctions at once. This package has NOT been robustly tested. Install using:
-
-```{r class.source="bg-info"}
-remotes::install_github("irikas/SnapMine_Paper", subdir = "snapmine")
+*Update (12/8/2025)*: While this repository will remain generally unchanged so that the publication links remain static, a new R package has been created that can parse a csv file and identify samples with (pairs of) novel junctions in Snaptron. This functionality is mainly for querying many junctions at once. While it has not been robustly tested, it can be found in the [snapmine repo] (https://github.com/irikas/snapmine).
 ```
 
 ## Abstract
